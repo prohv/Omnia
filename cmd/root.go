@@ -6,6 +6,7 @@ import (
 
 	"omnia/internal/config"
 	"omnia/internal/logger"
+	"omnia/pkg/engines"
 
 	"github.com/spf13/cobra"
 )
@@ -61,4 +62,10 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "enable verbose (debug) logging")
 	rootCmd.PersistentFlags().BoolVarP(&quiet, "quiet", "q", false, "enable quiet (error only) logging")
 	rootCmd.PersistentFlags().BoolVar(&jsonLog, "json", false, "output logs in JSON format")
+
+	// Register all processing engines in global registry
+	engines.GlobalRegistry.Register(engines.NewPDFCPUEngine())
+	engines.GlobalRegistry.Register(engines.NewImageEngine())
+	engines.GlobalRegistry.Register(engines.NewOpenXMLEngine())
+	engines.GlobalRegistry.Register(engines.NewLibreOfficeEngine())
 }
