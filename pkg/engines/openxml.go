@@ -14,7 +14,7 @@ import (
 	"omnia/internal/jobs"
 )
 
-// OpenXMLEngine extracts raw text from OpenXML files (.docx, .pptx, .xlsx) natively in Go.
+// OpenXMLEngine extracts raw text from OpenXML files (.docx, .pptx, .xlsx) and text files natively in Go.
 type OpenXMLEngine struct{}
 
 func NewOpenXMLEngine() *OpenXMLEngine {
@@ -27,9 +27,11 @@ func (e *OpenXMLEngine) Name() string {
 
 func (e *OpenXMLEngine) CanHandle(job jobs.Job) bool {
 	ext := strings.ToLower(filepath.Ext(job.InputPath))
-	isOfficeInput := ext == ".docx" || ext == ".pptx" || ext == ".xlsx"
+	mime := strings.ToLower(job.MimeType)
 
-	if !isOfficeInput {
+	isSupported := ext == ".docx" || ext == ".pptx" || ext == ".xlsx" || ext == ".txt" || ext == ".md" || strings.HasPrefix(mime, "text/")
+
+	if !isSupported {
 		return false
 	}
 
@@ -38,7 +40,7 @@ func (e *OpenXMLEngine) CanHandle(job jobs.Job) bool {
 		targetExt = strings.TrimPrefix(strings.ToLower(filepath.Ext(job.OutputPath)), ".")
 	}
 
-	if job.Operation == jobs.OperationExtractText || targetExt == "txt" {
+	if job.Operation == jobs.OperationExtractText || targetExt == "txt" || targetExt == "" {
 		return true
 	}
 
@@ -56,6 +58,23 @@ func (e *OpenXMLEngine) Execute(ctx context.Context, job jobs.Job) error {
 		return fmt.Errorf("openxml: output path is required")
 	}
 
+	if err := os.MkdirAll(filepath.Dir(job.OutputPath), 0755); err != nil {
+		return fmt.Errorf("openxml: failed to create output directory: %w", err)
+	}
+
+	ext := strings.ToLower(filepath.Ext(job.InputPath))
+	mime := strings.ToLower(job.MimeType)
+
+	// Plain text or markdown
+	if ext == ".txt" || ext == ".md" || strings.HasPrefix(mime, "text/") {
+		content, err := os.ReadFile(job.InputPath)
+		if err != nil {
+			return fmt.Errorf("openxml: failed to read text file: %w", err)
+		}
+		return os.WriteFile(job.OutputPath, content, 0644)
+	}
+
+	// OpenXML zipped formats (.docx, .pptx, .xlsx)
 	r, err := zip.OpenReader(job.InputPath)
 	if err != nil {
 		return fmt.Errorf("openxml: failed to open zip archive: %w", err)
@@ -64,7 +83,6 @@ func (e *OpenXMLEngine) Execute(ctx context.Context, job jobs.Job) error {
 
 	var extractedText strings.Builder
 
-	ext := strings.ToLower(filepath.Ext(job.InputPath))
 	switch ext {
 	case ".docx":
 		for _, f := range r.File {
@@ -97,10 +115,6 @@ func (e *OpenXMLEngine) Execute(ctx context.Context, job jobs.Job) error {
 				}
 			}
 		}
-	}
-
-	if err := os.MkdirAll(filepath.Dir(job.OutputPath), 0755); err != nil {
-		return fmt.Errorf("openxml: failed to create output directory: %w", err)
 	}
 
 	return os.WriteFile(job.OutputPath, []byte(extractedText.String()), 0644)
