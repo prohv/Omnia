@@ -28,16 +28,17 @@ var (
 )
 
 var processCmd = &cobra.Command{
-	Use:   "process <directory>",
-	Short: "Concurrently process all files in a folder",
-	Long: `Batch scan a folder, detect file types, plan execution pipelines,
+	Use:   "process <path1> [path2...]",
+	Short: "Concurrently process multiple files or folders together",
+	Long: `Batch scan multiple files or folders, detect file types, plan execution pipelines,
 and process all files concurrently using a high-performance worker pool.
 
-Example:
-  omnia process my_folder/ --workers 4 --to pdf --recursive`,
-	Args: cobra.ExactArgs(1),
+Examples:
+  omnia process my_folder/ --workers 4 --to pdf
+  omnia process doc1.docx pres2.pptx photo3.png --to pdf
+  omnia process folder1/ folder2/ --recursive`,
+	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		targetPath := args[0]
 		startTime := time.Now()
 
 		if numWorkers < 1 {
@@ -54,19 +55,22 @@ Example:
 			processToFormat = "pdf"
 		}
 
-		// 1. Scan Path
+		// 1. Scan Paths
 		scn := scanner.NewScanner()
-		files, err := scn.ScanPath(targetPath, recursiveScan)
-		if err != nil {
-			return fmt.Errorf("failed to scan path %s: %w", targetPath, err)
+		var files []string
+		for _, targetPath := range args {
+			scanned, err := scn.ScanPath(targetPath, recursiveScan)
+			if err == nil {
+				files = append(files, scanned...)
+			}
 		}
 
 		if len(files) == 0 {
-			pterm.Warning.Printf("No processable files found in %s\n", targetPath)
+			pterm.Warning.Println("No processable files found in specified paths")
 			return nil
 		}
 
-		pterm.Info.Printf("Discovered %d file(s) in %s (Workers: %d, Target: %s)\n", len(files), targetPath, numWorkers, processToFormat)
+		pterm.Info.Printf("Discovered %d file(s) across %d target path(s) (Workers: %d, Target: %s)\n", len(files), len(args), numWorkers, processToFormat)
 
 		// 2. Setup Signal Context for Ctrl+C
 		ctx, cancel := context.WithCancel(context.Background())

@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"omnia/internal/jobs"
@@ -20,19 +19,17 @@ var (
 )
 
 var convertCmd = &cobra.Command{
-	Use:   "convert <file>",
-	Short: "Convert file format to target (default PDF)",
-	Long: `Convert input file to specified target format.
-If no target format is specified, Omnia automatically converts the file to PDF.
+	Use:   "convert <file1> [file2...]",
+	Short: "Convert single or multiple files to target format (default PDF)",
+	Long: `Convert single or multiple input files to specified target format.
+If no target format is specified, Omnia automatically converts files to PDF.
 
 Examples:
   omnia convert document.docx --to pdf
-  omnia convert presentation.pptx --to pdf
-  omnia convert photo.png --to pdf
-  omnia convert document.docx --to txt`,
-	Args: cobra.ExactArgs(1),
+  omnia convert doc1.docx pres2.pptx photo3.png --to pdf
+  omnia convert report.docx --to txt`,
+	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		inputFile := args[0]
 		startTime := time.Now()
 
 		if targetFormat == "" {
@@ -43,26 +40,43 @@ Examples:
 		}
 
 		p := planner.NewPlanner()
-		job, err := p.CreateJob(inputFile, jobs.OperationConvert, targetFormat, outputDir, nil)
-		if err != nil {
-			return fmt.Errorf("failed to plan conversion job: %w", err)
-		}
-
 		r := router.NewRouter(engines.GlobalRegistry)
-		engine, err := r.Route(&job)
-		if err != nil {
-			return fmt.Errorf("failed to route conversion job: %w", err)
-		}
-
-		pterm.Info.Printf("Converting %s ➔ %s (%s)\n", inputFile, job.OutputPath, engine.Name())
-
 		ctx := context.Background()
-		if err := engine.Execute(ctx, job); err != nil {
-			pterm.Error.Printf("Conversion failed: %v\n", err)
-			return err
+
+		successCount := 0
+		failCount := 0
+
+		for _, inputFile := range args {
+			job, err := p.CreateJob(inputFile, jobs.OperationConvert, targetFormat, outputDir, nil)
+			if err != nil {
+				pterm.Error.Printf("Failed to plan job for %s: %v\n", inputFile, err)
+				failCount++
+				continue
+			}
+
+			engine, err := r.Route(&job)
+			if err != nil {
+				pterm.Error.Printf("Failed to route job for %s: %v\n", inputFile, err)
+				failCount++
+				continue
+			}
+
+			pterm.Info.Printf("Converting %s ➔ %s (%s)\n", inputFile, job.OutputPath, engine.Name())
+
+			if err := engine.Execute(ctx, job); err != nil {
+				pterm.Error.Printf("Conversion failed for %s: %v\n", inputFile, err)
+				failCount++
+			} else {
+				pterm.Success.Printf("Successfully converted %s to %s\n", inputFile, job.OutputPath)
+				successCount++
+			}
 		}
 
-		pterm.Success.Printf("Successfully converted %s to %s in %v\n", inputFile, job.OutputPath, time.Since(startTime).Round(time.Millisecond))
+		if len(args) > 1 {
+			pterm.Success.Printf("Batch convert completed: %d succeeded, %d failed in %v\n",
+				successCount, failCount, time.Since(startTime).Round(time.Millisecond))
+		}
+
 		return nil
 	},
 }
