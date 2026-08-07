@@ -1,0 +1,31 @@
+# Local plan files
+plan.md
+Omnia_v1.0_Updated_Architecture_Blueprint.md
+
+# Binaries
+/omnia
+/omnia.exe
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary created by `go test -c`
+*.test
+
+# Output of `go build`
+*.out
+
+# Dependency directories
+/vendor/
+
+# Go workspace file
+go.work
+
+# Output directories
+/output/
+
+# IDE files
+.idea/
+.vscode/
