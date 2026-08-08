@@ -1,4 +1,4 @@
-# Omnia ⚡
+# Omnia
 
 > **Fast, intelligent, cross-platform file processing CLI in Go.**
 
@@ -6,19 +6,19 @@ Omnia is a modern command-line tool that orchestrates best-in-class open-source 
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
-- 🚀 **Native Go First**: Images (`.png`, `.jpg`, `.webp`), PDFs (`.pdf`), and Text (`.docx`, `.pptx`, `.xlsx`, `.txt`) convert natively in Go with zero extra software required.
-- 🏢 **Universal Office to PDF**: Converts `.pptx`, `.docx`, `.xlsx`, `.odt`, and `.rtf` to visual PDFs using headless LibreOffice.
-- ⚡ **High-Performance Worker Pool**: Concurrently processes folders of files using bounded Go worker goroutines (`min(CPU, 6)` default).
-- 🔍 **Magic-Number MIME Detection**: Uses file signature signatures instead of unreliable file extensions.
-- 📊 **Rich Terminal UI**: Thread-safe live progress bars, ETA tracking, and execution summary tables powered by `pterm`.
-- 🩺 **Automated Setup & Doctor**: Built-in `omnia doctor` diagnostic tool and cross-platform `omnia setup` command to install dependencies via `winget`, `brew`, or `apt`.
-- 📦 **Lightweight Binary**: Single static executable compressed with UPX (~4.6 MB).
+- **Native Go First**: Images (`.png`, `.jpg`, `.webp`), PDFs (`.pdf`), and Text (`.docx`, `.pptx`, `.xlsx`, `.txt`) convert natively in Go with zero extra software required.
+- **Universal Office to PDF**: Converts `.pptx`, `.docx`, `.xlsx`, `.odt`, and `.rtf` to visual PDFs using headless LibreOffice.
+- **High-Performance Worker Pool**: Concurrently processes folders of files using bounded Go worker goroutines (`min(CPU, 6)` default).
+- **Magic-Number MIME Detection**: Uses file signature signatures instead of unreliable file extensions.
+- **Rich Terminal UI**: Thread-safe live progress bars, ETA tracking, and execution summary tables powered by `pterm`.
+- **Automated Setup & Doctor**: Built-in `omnia doctor` diagnostic tool and cross-platform `omnia setup` command to install dependencies via `winget`, `brew`, or `apt`.
+- **Lightweight Binary**: Single static executable compressed with UPX (~4.6 MB).
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Component | Choice | Scope |
 | :--- | :--- | :--- |
@@ -33,7 +33,7 @@ Omnia is a modern command-line tool that orchestrates best-in-class open-source 
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Installation
 
@@ -65,7 +65,7 @@ omnia setup
 
 ---
 
-## 📖 CLI Commands & Examples
+## CLI Commands & Examples
 
 ### 1. Convert Files (`omnia convert`)
 Convert single or multiple files to target formats (defaults to PDF):
@@ -118,7 +118,7 @@ omnia info document.pdf
 
 ---
 
-## 🏗️ Internal Architecture
+## Internal Architecture
 
 ```text
                                     OMNIA CLI
@@ -148,7 +148,7 @@ omnia info document.pdf
 
 ---
 
-## 🧪 Testing
+## Testing
 
 Run the full unit test suite:
 
@@ -158,6 +158,6 @@ go test -v ./tests/...
 
 ---
 
-## 📄 License
+## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
