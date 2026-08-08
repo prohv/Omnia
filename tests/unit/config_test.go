@@ -16,8 +16,8 @@ func TestDefaultConfig(t *testing.T) {
 	if cfg.Compression != "balanced" {
 		t.Errorf("expected default compression 'balanced', got %s", cfg.Compression)
 	}
-	if cfg.OutputDirectory != "./output" {
-		t.Errorf("expected default output_directory './output', got %s", cfg.OutputDirectory)
+	if cfg.OutputDirectory != "." {
+		t.Errorf("expected default output_directory '.', got %s", cfg.OutputDirectory)
 	}
 }
 
