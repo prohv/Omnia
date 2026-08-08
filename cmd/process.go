@@ -25,21 +25,37 @@ var (
 	recursiveScan   bool
 	processToFormat string
 	processOutDir   string
+	processClip     bool
 )
 
 var processCmd = &cobra.Command{
-	Use:   "process <path1> [path2...]",
+	Use:   "process [path1 path2...]",
 	Short: "Concurrently process multiple files or folders together",
 	Long: `Batch scan multiple files or folders, detect file types, plan execution pipelines,
 and process all files concurrently using a high-performance worker pool.
 
+Use --clip flag to automatically read copied file paths from system clipboard.
+
 Examples:
   omnia process my_folder/ --workers 4 --to pdf
-  omnia process doc1.docx pres2.pptx photo3.png --to pdf
+  omnia process --clip --to pdf
   omnia process folder1/ folder2/ --recursive`,
-	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		startTime := time.Now()
+
+		if processClip {
+			clipPaths, err := scanner.ReadClipboardPaths()
+			if err != nil || len(clipPaths) == 0 {
+				pterm.Error.Println("Clipboard is empty or does not contain valid file paths")
+				return nil
+			}
+			pterm.Info.Printf("Read %d file path(s) from clipboard\n", len(clipPaths))
+			args = append(args, clipPaths...)
+		}
+
+		if len(args) == 0 {
+			return cmd.Help()
+		}
 
 		if numWorkers < 1 {
 			if AppConfig != nil {
@@ -70,7 +86,7 @@ Examples:
 			return nil
 		}
 
-		pterm.Info.Printf("Discovered %d file(s) across %d target path(s) (Workers: %d, Target: %s)\n", len(files), len(args), numWorkers, processToFormat)
+		pterm.Info.Printf("Discovered %d file(s) across target path(s) (Workers: %d, Target: %s)\n", len(files), numWorkers, processToFormat)
 
 		// 2. Setup Signal Context for Ctrl+C
 		ctx, cancel := context.WithCancel(context.Background())
@@ -138,5 +154,6 @@ func init() {
 	processCmd.Flags().BoolVarP(&recursiveScan, "recursive", "r", false, "scan directory recursively")
 	processCmd.Flags().StringVarP(&processToFormat, "to", "t", "pdf", "target output format for converted files")
 	processCmd.Flags().StringVarP(&processOutDir, "out", "o", "", "output directory (default: same directory as input file)")
+	processCmd.Flags().BoolVarP(&processClip, "clip", "c", false, "read copied file paths directly from clipboard")
 	rootCmd.AddCommand(processCmd)
 }
