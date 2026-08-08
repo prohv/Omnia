@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.2] - 2026-08-08
+
+### Added
+- **Clipboard Integration**: Support for `--clip` flag across `convert` and `process` commands, enabling users to directly convert files copied to their system clipboard.
+
+### Changed
+- **Progress Tracking UI**: Massive overhaul to the terminal UI progress bars. Includes live animated loading states, color gradient percentage formatting (Yellow -> Green), and clean flashing completion text.
+- **LibreOffice Engine Optimizations**: Implemented blazing-fast batch-file execution with background polling, drastically speeding up bulk conversions.
+
+### Fixed
+- **Testing**: Resolved breaking unit test failures related to `internal/config`.
+
+---
+
 ## [0.1.1] - 2026-08-08
 
 ### Added

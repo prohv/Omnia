@@ -40,30 +40,29 @@ Omnia is a modern command-line tool that orchestrates best-in-class open-source 
 
 ### 1. Installation
 
-Build and install Omnia from source:
+The easiest way to install Omnia globally is using Go:
 
 ```bash
-# Clone the repository
-git clone https://github.com/prohv/omnia.git
-cd omnia
-
-# Build optimized binary
-go build -ldflags="-s -w" -o omnia.exe .
-
-# Optional: Install globally to Go bin path
-go install .
+go install github.com/prohv/omnia@latest
 ```
 
-### 2. Run Diagnostics & Automated Setup
+*(Alternatively, you can build from source by cloning the repository and running `go build .`)*
 
-Check system engine readiness:
-```bash
-omnia doctor
-```
+### 2. Automated Setup
 
-Automatically install missing external dependencies (`soffice` via `winget`, `brew`, or `apt`):
+Omnia requires LibreOffice to process Office documents natively. You do not need to hunt for installers! Just run:
+
 ```bash
 omnia setup
+```
+
+This command automatically detects your OS and installs the necessary background engines via your native package manager (`winget` on Windows, `brew` on macOS, or `apt` on Linux).
+
+### 3. Verify Readiness
+
+Check system engine readiness to ensure everything is perfect:
+```bash
+omnia doctor
 ```
 
 ---

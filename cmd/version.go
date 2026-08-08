@@ -9,7 +9,7 @@ import (
 
 // Version values populated during build or defaults
 var (
-	Version   = "0.1.1-dev"
+	Version   = "0.1.2"
 	GitCommit = "none"
 	BuildDate = "unknown"
 )
