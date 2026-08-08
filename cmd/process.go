@@ -137,6 +137,6 @@ func init() {
 	processCmd.Flags().IntVarP(&numWorkers, "workers", "w", 0, "number of worker goroutines (default min(CPU, 6))")
 	processCmd.Flags().BoolVarP(&recursiveScan, "recursive", "r", false, "scan directory recursively")
 	processCmd.Flags().StringVarP(&processToFormat, "to", "t", "pdf", "target output format for converted files")
-	processCmd.Flags().StringVarP(&processOutDir, "out", "o", "", "output directory (default ./output)")
+	processCmd.Flags().StringVarP(&processOutDir, "out", "o", "", "output directory (default: same directory as input file)")
 	rootCmd.AddCommand(processCmd)
 }
