@@ -86,6 +86,11 @@ func (p *Pool) processJob(ctx context.Context, job jobs.Job) {
 	if execErr == nil {
 		if info, err := os.Stat(job.OutputPath); err == nil {
 			outputSize = info.Size()
+
+			// Post-conversion verify & cleanup for PDF conversions ONLY
+			if job.Operation == jobs.OperationConvert && job.TargetFormat == "pdf" && info.Size() > 0 && job.InputPath != job.OutputPath {
+				_ = os.Remove(job.InputPath)
+			}
 		}
 	}
 
