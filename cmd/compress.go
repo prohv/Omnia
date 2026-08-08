@@ -77,6 +77,6 @@ Compression Levels: low, balanced, high, extreme (default: balanced)`,
 
 func init() {
 	compressCmd.Flags().StringVarP(&compressLevel, "level", "l", "balanced", "compression level (low, balanced, high, extreme)")
-	compressCmd.Flags().StringVarP(&compressOut, "out", "o", "", "output directory (default ./output)")
+	compressCmd.Flags().StringVarP(&compressOut, "out", "o", "", "output directory (default: same directory as input file)")
 	rootCmd.AddCommand(compressCmd)
 }

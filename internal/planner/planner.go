@@ -31,12 +31,13 @@ func (p *Planner) CreateJob(inputPath string, op jobs.Operation, targetFormat st
 	}
 	targetFormat = strings.TrimPrefix(strings.ToLower(targetFormat), ".")
 
-	if outputDir == "" {
-		outputDir = "./output"
+	targetDir := outputDir
+	if targetDir == "" || targetDir == "." {
+		targetDir = filepath.Dir(absInput)
 	}
 
 	outFileName := fmt.Sprintf("%s.%s", rawName, targetFormat)
-	outputPath := filepath.Join(outputDir, outFileName)
+	outputPath := filepath.Join(targetDir, outFileName)
 
 	jobID := fmt.Sprintf("job-%s-%s", op, rawName)
 

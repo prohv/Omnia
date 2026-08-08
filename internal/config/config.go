@@ -37,7 +37,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		Workers:         DefaultWorkers(),
 		Compression:     "balanced",
-		OutputDirectory: "./output",
+		OutputDirectory: ".",
 		KeepOriginal:    true,
 		Overwrite:       false,
 		LogLevel:        "info",
@@ -50,7 +50,7 @@ func LoadConfig(cfgFile string) (*Config, error) {
 
 	v.SetDefault("workers", DefaultWorkers())
 	v.SetDefault("compression", "balanced")
-	v.SetDefault("output_directory", "./output")
+	v.SetDefault("output_directory", ".")
 	v.SetDefault("keep_original", true)
 	v.SetDefault("overwrite", false)
 	v.SetDefault("log_level", "info")
