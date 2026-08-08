@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.1] - 2026-08-08
+
+### Added
+- **Same-Directory Output**: Default output location now resolves to the exact directory of the input file (`.`) when no `--out` flag is specified.
+- **Verified PDF Cleanup**: PDF conversions automatically verify new `.pdf` existence and size > 0 bytes before safely removing the original non-PDF input file.
+- **Existing PDF Auto-Skipping**: Files that are already `.pdf` are automatically detected and skipped from re-conversion, preserving them completely untouched.
+
+---
+
 ## [0.1.0] - 2026-08-08
 
 ### Added

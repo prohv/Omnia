@@ -10,6 +10,9 @@ Omnia is a modern command-line tool that orchestrates best-in-class open-source 
 
 - **Native Go First**: Images (`.png`, `.jpg`, `.webp`), PDFs (`.pdf`), and Text (`.docx`, `.pptx`, `.xlsx`, `.txt`) convert natively in Go with zero extra software required.
 - **Universal Office to PDF**: Converts `.pptx`, `.docx`, `.xlsx`, `.odt`, and `.rtf` to visual PDFs using headless LibreOffice.
+- **Same-Directory Output**: Created files save directly in the input file's directory by default (customizable via `--out`).
+- **Verified PDF Cleanup**: PDF conversions verify new `.pdf` existence and non-zero file size before safely removing original non-PDF input files.
+- **Existing PDF Auto-Skipping**: Input files already ending in `.pdf` are automatically detected and skipped, preserving them completely untouched.
 - **High-Performance Worker Pool**: Concurrently processes folders of files using bounded Go worker goroutines (`min(CPU, 6)` default).
 - **Magic-Number MIME Detection**: Uses file signature signatures instead of unreliable file extensions.
 - **Rich Terminal UI**: Thread-safe live progress bars, ETA tracking, and execution summary tables powered by `pterm`.
@@ -71,8 +74,8 @@ omnia setup
 Convert single or multiple files to target formats (defaults to PDF):
 
 ```bash
-# Convert presentation slides to PDF
-omnia convert presentation.pptx --to pdf
+# Convert presentation slides to PDF (saves in same directory & cleans original)
+omnia convert presentation.pptx
 
 # Convert Word document to PDF
 omnia convert report.docx --to pdf
